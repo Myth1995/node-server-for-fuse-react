@@ -8,8 +8,17 @@ module.exports = (sequelize, Sequelize) => {
     email: {
       type: Sequelize.STRING
     },
-    activate: {
-      type: Sequelize.INTEGER
+    telephone: {
+      type: Sequelize.STRING
+    },
+    family_name: {
+      type: Sequelize.STRING
+    },
+    given_name: {
+      type: Sequelize.STRING
+    },
+    birthday: {
+      type: Sequelize.STRING
     },
     completed: {
       type: Sequelize.INTEGER

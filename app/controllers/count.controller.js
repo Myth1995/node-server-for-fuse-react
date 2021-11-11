@@ -1,4 +1,5 @@
 const db = require("../models");
+const { sequelize } = require('../models');
 const User = db.users;
 const App = db.apps;
 const File = db.files;
@@ -6,94 +7,55 @@ const Ticket = db.tickets;
 const Op = db.Sequelize.Op;
 
 // Find a single User with an id
-exports.count = (req, res) => {
-    User.count()
-      .then(data => {
-        const result = [];
-        // console.log(data);
-        const result_user = {
-          id: 'widget1',
-          title: 'Users',
-          data: {
-            name: 'Total signed users',
-            count: data,
-            // extra: {
-            //   name: "Yesterday's overdue",
-            //   count: 2
-            // }
-          },
-          detail: 'You can show some detailed information about this widget in here.'
-        }
-        console.log(result_user);
-        result.push(result_user);
-        
-        App.count()
-            .then(data=>{
-                const result_app = {
-                    id: 'widget2',
-                    title: 'Applications',
-                    data: {
-                        name: 'Total registered applications',
-                        count: data,
-                    },
-                    detail: 'You can show some detailed information about this widget in here.'
-                };
-                result.push(result_app);
-                
-                File.count()
-                  .then(data => {
-                      const result_file = {
-                        id: 'widget3',
-                        title: 'Files',
-                        data: {
-                            name: 'Total uploaded files',
-                            count: data,
-                        },
-                        detail: 'You can show some detailed information about this widget in here.'
-                      }
-                      result.push(result_file);
+exports.count = async function(req, res) {
+    try{
+        const userCount = await User.count();
+        const appCount = await App.count();
+        const fileCount = await File.count();
+        const ticketCount = await Ticket.count();
 
-                      Ticket.count()
-                        .then(data => {
-                            const result_ticket = {
-                                id: 'widget4',
-                                title: 'Tickets',
-                                data: {
-                                    name: 'Total received tickets',
-                                    count: data,
-                                },
-                                detail: 'You can show some detailed information about this widget in here.'
-                              }
-                            result.push(result_ticket);
-                            res.json(result);
-                        })
-                        .catch(err=>{
-                            console.log(err);
-                            res.status(500).send({
-                                message: "Error retrieving ticket count"
-                            });
-                        })
-                      
-                  })
-                  .catch(err => {
-                    console.log(err);
-                    res.status(500).send({
-                        message: "Error retrieving file count"
-                    });
-                });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(500).send({
-                message: "Error retrieving app count"
-                });
-            });
+        // weekly chart info
+        var start = new Date();
+        start.setUTCHours(0,0,0,0);
+
+        var end = new Date();
+        end.setUTCHours(23,59,59,999);
+
+        var curr = new Date; // get current date
+        var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        var last = first + 6; // last day is the first day + 6
+
+        var firstday = new Date(curr.setDate(first));
+        var lastday = new Date(curr.setDate(last));
+
+        const chartinfo = await App.findAll({
+            attributes: [
+                [ sequelize.fn('weekday', sequelize.col('added_date')), 'weekday'],
+                [ sequelize.fn('count', '*'), 'count']
+            ],
+            where: 
+            {
+                added_date: {
+                    [Op.gt]: firstday,
+                    [Op.lt]: lastday
+                }
+            },
+            group: ['weekday']
+        })
        
-      })
-      .catch(err => {
+
+        res.json({
+            user: userCount,
+            app: appCount,
+            file: fileCount,
+            ticket: ticketCount,
+            chart: chartinfo
+        });
+    }
+    catch(err){
         console.log(err);
         res.status(500).send({
-          message: "Error retrieving user count"
+            message: "Error while getting count: " + err
         });
-      });
+    }
 };

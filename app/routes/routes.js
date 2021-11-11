@@ -6,7 +6,7 @@ module.exports = app => {
   var router = require("express").Router();
 
   // Get kinds of count
-  router.get("/count/user", count.count);
+  router.get("/dashboard", count.count);
 
   router.get("/chart", chart.chart_info);
 

@@ -12,28 +12,38 @@ exports.chart_info = (req, res) => {
     var end = new Date();
     end.setUTCHours(23,59,59,999);
 
+    var curr = new Date; // get current date
+    var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+    var last = first + 6; // last day is the first day + 6
+
+    var firstday = new Date(curr.setDate(first));
+    var lastday = new Date(curr.setDate(last));
+
     App.findAll({
-        attributes: {exclude: ['createdAt', 'updatedAt']},
-        where: sequelize.where(sequelize.fn('date', sequelize.col('added_date')), '<=', end),
-        // {
-            // added_date: {
-            //     [Op.gt]: start,
-            //     [Op.lt]: end
-            // }
-        // },
-        group: ['added_date']
+        attributes: [
+            [ sequelize.fn('weekday', sequelize.col('added_date')), 'weekday'],
+            [ sequelize.fn('count', '*'), 'count']
+        ],
+        where: 
+        {
+            added_date: {
+                [Op.gt]: firstday,
+                [Op.lt]: lastday
+            }
+        },
+        group: ['weekday']
     })
     .then(data=>{
-        const series = {
-            "This week": [
+        const series = [
                 {
                     name: 'Sales',
                     data: [1.9, 3, 3.4, 2.2, 2.9, 3.9, 2.5],
                     fill: 'start'
                 }
-            ]
-        };
-        console.log(data.length);
+            ];
+
+        series[0].data[data[0].dataValues.weekday] = data[0].dataValues.count;
+        console.log(data[0].dataValues.weekday);
         // res.send(data);
     })
 };
