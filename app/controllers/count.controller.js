@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.users;
 const App = db.apps;
+const File = db.files;
 const Op = db.Sequelize.Op;
 
 // Find a single User with an id
@@ -33,15 +34,25 @@ exports.count = (req, res) => {
                     data: {
                         name: 'Total registered applications',
                         count: data,
-                        // extra: {
-                        // 	name: "Yesterday's overdue",
-                        // 	count: 2
-                        // }
                     },
                     detail: 'You can show some detailed information about this widget in here.'
                 };
                 result.push(result_app);
-                res.json(result);
+                
+                File.count()
+                  .then(data => {
+                      const result_file = {
+                        id: 'widget3',
+                        title: 'Files',
+                        data: {
+                            name: 'Total uploaded files',
+                            count: data,
+                        },
+                        detail: 'You can show some detailed information about this widget in here.'
+                      }
+                      result.push(result_file);
+                      res.json(result);
+                  })
             })
             .catch(err => {
                 console.log(err);
