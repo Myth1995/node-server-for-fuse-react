@@ -6,8 +6,8 @@ const File = db.files;
 const Ticket = db.tickets;
 const Op = db.Sequelize.Op;
 
-// Find a single User with an id
-exports.count = async function(req, res) {
+
+exports.get_info = async function(req, res) {
     try{
         const userCount = await User.count();
         const appCount = await App.count();

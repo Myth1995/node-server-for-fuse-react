@@ -1,12 +1,12 @@
 module.exports = app => {
   const users = require("../controllers/user.controller.js");
-  const count = require("../controllers/count.controller.js");
+  const dashboard = require("../controllers/dashboard.controller.js");
   const chart = require("../controllers/chart.controller.js");
 
   var router = require("express").Router();
 
   // Get kinds of count
-  router.get("/dashboard", count.count);
+  router.get("/dashboard", dashboard.get_info);
 
   router.get("/chart", chart.chart_info);
 
