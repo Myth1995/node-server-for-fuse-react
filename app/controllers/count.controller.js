@@ -2,6 +2,7 @@ const db = require("../models");
 const User = db.users;
 const App = db.apps;
 const File = db.files;
+const Ticket = db.tickets;
 const Op = db.Sequelize.Op;
 
 // Find a single User with an id
@@ -51,21 +52,46 @@ exports.count = (req, res) => {
                         detail: 'You can show some detailed information about this widget in here.'
                       }
                       result.push(result_file);
-                      res.json(result);
+
+                      Ticket.count()
+                        .then(data => {
+                            const result_ticket = {
+                                id: 'widget4',
+                                title: 'Tickets',
+                                data: {
+                                    name: 'Total received tickets',
+                                    count: data,
+                                },
+                                detail: 'You can show some detailed information about this widget in here.'
+                              }
+                            result.push(result_ticket);
+                            res.json(result);
+                        })
+                        .catch(err=>{
+                            console.log(err);
+                            res.status(500).send({
+                                message: "Error retrieving ticket count"
+                            });
+                        })
+                      
                   })
+                  .catch(err => {
+                    console.log(err);
+                    res.status(500).send({
+                        message: "Error retrieving file count"
+                    });
+                });
             })
             .catch(err => {
                 console.log(err);
-                suc_flag = false;
                 res.status(500).send({
-                message: "Error retrieving user count"
+                message: "Error retrieving app count"
                 });
             });
        
       })
       .catch(err => {
         console.log(err);
-        suc_flag = false;
         res.status(500).send({
           message: "Error retrieving user count"
         });
