@@ -14,21 +14,16 @@ exports.get_info = async function(req, res) {
         const fileCount = await File.count();
         const ticketCount = await Ticket.count();
 
-        // weekly chart info
-        var start = new Date();
-        start.setUTCHours(0,0,0,0);
-
-        var end = new Date();
-        end.setUTCHours(23,59,59,999);
-
+        //chart info
+        //This week
         var curr = new Date; // get current date
         var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
         var last = first + 6; // last day is the first day + 6
 
-        var firstday = new Date(curr.setDate(first));
-        var lastday = new Date(curr.setDate(last));
+        var f1 = new Date(curr.setDate(first));
+        var l1 = new Date(curr.setDate(last));
 
-        const chartinfo = await App.findAll({
+        const chart_app_this_week = await App.findAll({
             attributes: [
                 [ sequelize.fn('weekday', sequelize.col('added_date')), 'weekday'],
                 [ sequelize.fn('count', '*'), 'count']
@@ -36,8 +31,50 @@ exports.get_info = async function(req, res) {
             where: 
             {
                 added_date: {
-                    [Op.gt]: firstday,
-                    [Op.lt]: lastday
+                    [Op.gt]: f1,
+                    [Op.lt]: l1
+                }
+            },
+            group: ['weekday']
+        })
+
+        // last week
+        var ago = new Date(curr.getTime() - (7 * 24 * 3600 * 1000));
+        var first = ago.getDate() - ago.getDay(); // First day is the day of the month - the day of the week
+        var f2 = new Date(curr.setDate(first));
+        var l2 = new Date(f2.getTime() + (6 * 24 * 3600 * 1000 ));
+        
+        const chart_app_last_week = await App.findAll({
+            attributes: [
+                [ sequelize.fn('weekday', sequelize.col('added_date')), 'weekday'],
+                [ sequelize.fn('count', '*'), 'count']
+            ],
+            where: 
+            {
+                added_date: {
+                    [Op.gt]: f2,
+                    [Op.lt]: l2
+                }
+            },
+            group: ['weekday']
+        })
+
+        // 2 week ago
+        ago = new Date(curr.getTime() - (14 * 24 * 3600 * 1000));
+        first = ago.getDate() - ago.getDay(); // First day is the day of the month - the day of the week
+        var f3 = new Date(curr.setDate(first));
+        var l3 = new Date(f3.getTime() + (6 * 24 * 3600 * 1000 ));
+        
+        const chart_app_two_week = await App.findAll({
+            attributes: [
+                [ sequelize.fn('weekday', sequelize.col('added_date')), 'weekday'],
+                [ sequelize.fn('count', '*'), 'count']
+            ],
+            where: 
+            {
+                added_date: {
+                    [Op.gt]: f3,
+                    [Op.lt]: l3
                 }
             },
             group: ['weekday']
@@ -49,7 +86,9 @@ exports.get_info = async function(req, res) {
             app: appCount,
             file: fileCount,
             ticket: ticketCount,
-            chart: chartinfo
+            chart_app_this_week: chart_app_this_week,
+            chart_app_last_week: chart_app_last_week,
+            chart_app_two_week: chart_app_two_week
         });
     }
     catch(err){
