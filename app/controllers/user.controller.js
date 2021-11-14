@@ -1,3 +1,4 @@
+const { sequelize } = require("../models");
 const db = require("../models");
 const User = db.users;
 const Op = db.Sequelize.Op;
@@ -37,7 +38,18 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  User.findAll(/*{ where: condition }*/)
+  User.findAll({ 
+      attributes: [
+        'ID','email', 'telephone', 'family_name', 'given_name', 'birthday', 'birth_country', 'address', 'gender', 'nationality', 'dual_citizen_country',
+        'city', 'postcode', 'test_type', 'medical', 'criminal',
+        [ sequelize.literal('IF(medical=0, "NO", "YES")'), 'medical'],
+        [ sequelize.literal('IF(criminal=0, "NO", "YES")'), 'criminal'],
+        [ sequelize.literal('IF(dual_citizen=0, "NO", "YES")'), 'dual_citizen'],
+        [ sequelize.literal('IF(english_test=0, "NO", "YES")'), 'english_test'],
+        // [ sequelize.fn('DATE', sequelize.col('birthday')), 'birthday'],
+        [ sequelize.literal('CONVERT(floor(rand()*10000000), char)'), 'id']
+      ]
+    })
     .then(data => {
       res.send(data);
     })
@@ -92,9 +104,8 @@ exports.update = (req, res) => {
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
-
   User.destroy({
-    where: { id: id }
+    where: { ID: id }
   })
     .then(num => {
       if (num == 1) {

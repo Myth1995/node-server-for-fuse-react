@@ -10,25 +10,25 @@ module.exports = app => {
 
   router.get("/chart", chart.chart_info);
 
-  // Create a new Tutorial
+  // Create a new User
   router.post("/", users.create);
 
-  // Retrieve all Tutorials
+  // Retrieve all Users
   router.get("/", users.findAll);
 
-  // Retrieve all published Tutorials
+  // Retrieve all published Users
   router.get("/published", users.findAllPublished);
 
   // Retrieve a single Tutorial with id
   router.get("/:id", users.findOne);
 
-  // Update a Tutorial with id
+  // Update a User with id
   router.put("/:id", users.update);
 
-  // Delete a Tutorial with id
-  router.delete("/:id", users.delete);
+  // Delete a User with id
+  router.delete("/user/:id", users.delete);
 
-  // Delete all Tutorials
+  // Delete all Users
   router.delete("/", users.deleteAll);
 
   app.use('/api/', router);
