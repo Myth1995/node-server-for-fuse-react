@@ -23,5 +23,8 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.apps = require("./app.model.js")(sequelize, Sequelize);
 db.files = require("./file.model.js")(sequelize, Sequelize);
 db.tickets = require("./ticket.model.js")(sequelize, Sequelize);
+db.incomes = require("./income.model.js")(sequelize, Sequelize);
+db.expenses = require("./expense.model.js")(sequelize, Sequelize);
+db.recuringExpenses = require("./recuring-expense.model.js")(sequelize, Sequelize);
 
 module.exports = db;

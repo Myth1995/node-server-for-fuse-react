@@ -2,6 +2,7 @@ module.exports = app => {
   const users = require("../controllers/user.controller.js");
   const dashboard = require("../controllers/dashboard.controller.js");
   const chart = require("../controllers/chart.controller.js");
+  const finance = require("../controllers/finance.controller.js");
 
   var router = require("express").Router();
 
@@ -19,7 +20,7 @@ module.exports = app => {
   // Retrieve all published Users
   router.get("/published", users.findAllPublished);
 
-  // Retrieve a single Tutorial with id
+  // Retrieve a single User with id
   router.get("/:id", users.findOne);
 
   // Update a User with id
@@ -30,6 +31,15 @@ module.exports = app => {
 
   // Delete all Users
   router.delete("/", users.deleteAll);
+
+  // Add income
+  router.post("/finance/add-income", finance.add_income);
+
+  // Add expense
+  router.post("/finance/add-expense", finance.add_expense);
+
+  // Add recuring expense
+  router.post("/finance/add-recuring-expense", finance.add_recuring_expense);
 
   app.use('/api/', router);
 };
