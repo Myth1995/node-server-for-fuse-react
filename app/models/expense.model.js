@@ -8,7 +8,10 @@ module.exports = (sequelize, Sequelize) => {
         type: {
             type: Sequelize.INTEGER
         },
-        name: {
+        orgName: {
+            type: Sequelize.STRING
+        },
+        studentName: {
             type: Sequelize.STRING
         },
         currency: {
@@ -23,6 +26,12 @@ module.exports = (sequelize, Sequelize) => {
         receipt: {
             type: Sequelize.STRING
         },
+        purpose: {
+            type: Sequelize.STRING
+        },
+        reason: {
+            type: Sequelize.STRING
+        }
     }, {
         timestamps: false,
         createdAt: false,

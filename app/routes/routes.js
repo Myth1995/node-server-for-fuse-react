@@ -32,6 +32,9 @@ module.exports = app => {
   // Delete all Users
   router.delete("/", users.deleteAll);
 
+  // Get finance statements
+  router.get("/finance/statements", finance.get_statements);
+
   // Add income
   router.post("/finance/add-income", finance.add_income);
 

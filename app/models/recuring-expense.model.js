@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const recuringExpense = sequelize.define('recuringExpense', {
+    const recuringExpense = sequelize.define('recuringexpense', {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -19,6 +19,21 @@ module.exports = (sequelize, Sequelize) => {
         },
         date: {
             type: Sequelize.DATE
+        },
+        purpose: {
+            type: Sequelize.STRING
+        },
+        salaryType: {
+            type: Sequelize.STRING
+        },
+        officeExpensesType: {
+            type: Sequelize.STRING
+        },
+        rentType: {
+            type: Sequelize.STRING
+        },
+        otherType: {
+            type: Sequelize.STRING
         },
     }, {
         timestamps: false,
